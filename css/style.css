@@ -1,0 +1,98 @@
+body{
+    margin:0;
+    padding:0;
+    /* background:#333; */
+    background:#f1e2be;
+  }
+
+header{
+    display: flex;
+    justify-content:space-between;
+    align-items: center;
+    padding: 10px;
+    margin: 10px 10px 0 10px;
+    height:150px
+}
+
+.header_item{
+  width:100%;
+}
+
+.header_img{
+  max-width: 30%;
+  height: auto;
+  margin: 0 100px 0 100px;
+}
+
+h1,h2{
+  font-family: sans-serif;
+  padding:0;
+  margin:10px;
+  color:#47763c;
+  text-align: center;
+}
+
+.main{
+  /* background-color: #dbedf0; */
+  /* width: 100%; */
+  display: flex;
+  /* justify-content: canter; */
+  /* align-items: center; */
+  /* margin: 10px 0 10px 0; */
+  padding: 10px;
+  /* border-top: 1px solid #ccc; */
+  /* border-bottom: 1px solid #ccc; */
+}
+
+.np_list button{
+  display: flex;
+  width:300px;
+  margin:10px;
+}
+
+button{
+  font-family: sans-serif;
+  font-size: 16px;
+  color: #f1e2be;
+  background: #47763c;
+}
+
+button:hover{
+  color: #3b3b3b;
+  background: #c1d178;
+}
+
+.journal{
+  display: flex;
+  border-top: 3px solid #47763c;
+  justify-content: canter;
+  align-items: center;
+}
+
+#gallery{
+  padding: 10px;
+  margin: 0 45px 0 45px;
+  width: 550px;
+}
+
+#gallery .centerPhoto img{
+  width: 100%;
+  display: block;
+}
+
+.centerPhoto p{
+  color: #47763c;
+  font-size: 20px;
+  text-align: center;
+}
+
+#gallery .thumbnail img{
+  margin: 10px;
+  width: 60px;
+  text-align: center;
+}
+
+.travel_info {
+  text-align:left;
+  width:320px;
+}

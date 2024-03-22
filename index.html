@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>TakeMe2NP</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="icon" type="img/png" href="img/favicon.ico">
+</head>
+
+<body>
+<header>
+  <div class="header_item">
+    <img class="header_img" src="img/compass.png" alt="">
+  </div>
+  <div class="header_item">
+    <h1>Travel Journal</h1>
+    <h2>Take me to National Parks</h2>
+  </div>
+  <div class="header_item">
+      <img class="header_img" src="img/compass.png" alt="">
+  </div>
+</header>
+
+<!-- MAP[START] id="myMap"は固定、widthとheightは必ず指定する-->
+<section class="main">
+  <div id="myMap" style='position:relative;width:650px;height:650px;'></div>
+  <div class="np_list">
+    <button id="romo">199607_Rocky Mountain NP</button>
+    <button id="grca">201107_Grand Canyon NP</button>
+    <button id="meve">201208_Mesa Verde NP</button>
+    <button id="yell">201208_Yellowstone NP</button>
+  </div>
+</section>
+<!-- MAP[END] -->
+
+<!-- Travel Journal [START] 左側にフォトギャラリー、右側に旅行メモを表示する-->
+<section class="journal">
+  <div id="gallery">
+    <div class="centerPhoto">
+    </div>
+    <div class="thumbnail">
+    </div>
+  </div>  
+  <!-- <div class="travel_info">
+     <p>Date</p>
+     <p>Stay</p>
+  </div> -->
+</section>
+<!-- MAP[END] -->
+
+<!-- JQuery を使えるようにする(CDNから読み込む) -->
+<!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script> -->
+
+<!-- [ MapTypeId ] https://msdn.microsoft.com/en-us/library/mt712700.aspx -->
+<!-- ライブラリを読み込んだら一番最初に関数GetMapを実施する -->
+<script src='https://www.bing.com/api/maps/mapcontrol?callback=GetMap&key' async defer></script>
+
+<!-- BmapQuery を使えるようにする-->
+<script src="../js/BmapQuery.js"></script>
+
+<script>
+//****************************************************************************************
+// BingMaps&BmapQuery
+//****************************************************************************************
+//Init
+function GetMap(){
+    //------------------------------------------------------------------------
+    //1. Instance
+    //------------------------------------------------------------------------
+    const map = new Bmap("#myMap");
+
+    //------------------------------------------------------------------------
+    //2. Display Map
+    //   startMap(lat, lon, "MapType", Zoom[1~20]);
+    //   MapType:[load, aerial,canvasDark,canvasLight,birdseye,grayscale,streetside]
+    //--------------------------------------------------
+    map.startMap(29.754882333068473, -95.62537418530877, "aerial", 15);
+
+    //----------------------------------------------------
+    //3. Add Pushpin
+    // pin(lat, lon, "color", [drag:true|false], [click:true|false], [hover:true|false], [visible:true|false]);
+    //----------------------------------------------------
+    let pin = map.pin(29.754882333068473, -95.62537418530877, "#0000ff");
+
+    //----------------------------------------------------
+    //4. MapChangeView
+    //   ex1)changeMap(lat, lon, "MapType");
+    //   ex2)changeMap(lat, lon, "MapType", Zoom[1~20]);
+    //   "MapType":[load,aerial,canvasDark,canvasLight,birdseye,grayscale,streetside]
+    //--------------------------------------------------
+
+    //★1つ目★Rocky Mountain National Park★
+    //map.setView: Display change of map 
+    //id'romo'ボタンをクリックしたら関数changeMap()でconst mapの情報を書き変える
+    document.getElementById("romo").onclick = function (){ 
+    map.changeMap(40.355309, -105.721436, "aerial", 12);
+
+    //Rocky Mountain National Park の写真集
+    //お気に入りの写真のsrc属性とキャプションcaptionをオブジェクト型データとして配列npPhotoで定義する
+    let npPhoto = [
+      {src: 'img/l1.png',caption: '1です'},
+      {src: 'img/l2.png',caption: '2です'},
+      {src: 'img/l3.png',caption: '3です'},
+    ];
+
+    // centerPhotoに表示する1枚目の写真を指定する
+    // 変数mainPhotoにメソッドdocument.createElementでimgタグを定義する
+    // メソッドsetAttributeで指定した要素(imgタグ)の属性の値をセットする
+    // 配列データnpPhoto[0]で定義された1枚目を写真のsrc属性とalt属性を指定する
+    let mainPhoto = document.createElement('img');
+    mainPhoto.setAttribute('src', npPhoto[0].src);
+    mainPhoto.setAttribute('alt', npPhoto[0].caption);
+
+    // 変数mainCaptionにメソッドdocument.createElementでpタグを定義する
+    // メソッドinnerTextで配列データnpPhoto[0]で定義されたキャプションを代入する
+    let mainCaption = document.createElement('p');
+    mainCaption.innerText = mainPhoto.alt;
+
+    // 変数photoSpaceにメソッドdocument.querySelectorで表示する要素centerPhotoを取得する
+    // メソッドinsertBeforeでphotoSpace要素に対してmainPhoto要素にnullを挿入する。 
+    // メソッドinsertBeforeでphotoSpace要素に対してmainCaption要素にnullを挿入する。 
+    let photoSpace = document.querySelector('#gallery .centerPhoto');
+    photoSpace.insertBefore(mainPhoto, null);
+    photoSpace.insertBefore(mainCaption, null);
+
+    // サムネイルを表示する
+    let thumbnailSpace = document.querySelector('#gallery .thumbnail');
+    for (let i =0; i<npPhoto.length; i++) {
+      let thumbImage = document.createElement('img');
+      thumbImage.setAttribute('src',npPhoto[i].src);
+      thumbImage.setAttribute('alt', npPhoto[i].caption);
+      thumbnailSpace.insertBefore(thumbImage, null);
+    }
+
+    // クリックしたサムネイルの写真をcenterPhotoとして表示する
+    // 変数mainPhotoのsrc属性にクリックしたサムネイルのsrc属性を代入する
+    // 変数mainCaptionのsrc属性にクリックしたサムネイルのsrc属性を代入する
+    thumbnailSpace.addEventListener('click',function(event){
+      if (event.target.src) {
+        mainPhoto.src = event.target.src;
+        mainCaption.innerText = event.target.alt;
+      }
+    })
+    };
+
+    //★2つ目★Grand Canyon National Park★
+    //map.setView: Display change of map 
+    //id'grca'ボタンをクリックしたら関数changeMap()でconst mapの情報を書き変える
+    document.getElementById("grca").onclick = function (){ 
+    map.changeMap(36.356517, -112.687635, "aerial", 12);
+    }
+
+
+    //★3つ目★Mesa Verde National Park★
+    //map.setView: Display change of map 
+    ///id'meve'ボタンをクリックしたら関数changeMap()でconst mapの情報を書き変える
+    document.getElementById("meve").onclick = function (){ 
+    map.changeMap(37.167051338483, -108.47362914405178, "aerial", 12);
+    }
+
+    //★4つ目の公園★Mesa Verde National Park★
+    //Yelowstone National Park map.setView: Display change of map 
+    ///id'yell'ボタンをクリックしたら関数changeMap()でconst mapの情報を書き変える
+    document.getElementById("yell").onclick = function (){ 
+    map.changeMap(44.48572623388123, -110.855256, "aerial", 12);
+    }
+
+    //----------------------------------------------------
+    //5. Infobox
+    //   options = new Array();
+    //   options[index] = { lat, lon, width, height, title, pinColor, description, show };
+    //----------------------------------------------------
+    const options = [];
+     options[0]={
+        "lat":40.355309,
+        "lon":-105.721436,
+        "title":"Rocky Mountain National Park",
+        "pinColor":"#ff0000",
+        "height":300,
+        "width":320,
+        "description": 'Rocky mountain<br><img src="../img/romo.jpg" width="300">',
+        "show":false
+    };
+    options[1]={
+        "lat":36.356517,
+        "lon":-112.687635,
+        "title":"Grand Canyon National Park",
+        "pinColor":"#ff0000",
+        "height":300,
+        "width":320,
+        "description": 'Grand Canyon<br><img src="../img/grca.jpg" width="300">',
+        "show":false
+    };
+    options[2]={
+         "lat":37.167051338483,
+        "lon":-108.47362914405178,
+        "title":"Mesa Verde National Park",
+        "pinColor":"#ff0000",
+        "height":300,
+        "width":320,
+        "description": 'Cliff Palace<br><img src="../img/meve.jpg" width="300">',
+         "show":false
+     };
+
+     options[3]={
+         "lat":44.48572623388123,
+        "lon":-110.8552564,
+        "title":"Yellowstone National Park",
+        "pinColor":"#ff0000",
+        "height":300,
+        "width":320,
+        "description": 'Sapphire Pool<br><img src="../img/yell.jpg" width="300">',
+         "show":false
+     };
+
+    //----------------------------------------------------
+    //6. Switch infoboxs
+    //   infoboxLayers(options, true); //true=one, false=Multiple
+    //----------------------------------------------------
+    map.infoboxLayers(options,true);
+  }
+</script>
+</body>
+</html>
